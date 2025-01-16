@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gemini AI Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        #chat-container {
+            margin-top: 20px;
+        }
+        #question-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        #response {
+            white-space: pre-wrap;
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ask Gemini AI</h1>
+    <div id="chat-container">
+        <textarea id="question-input" rows="4" placeholder="Type your question here..."></textarea>
+        <button onclick="askQuestion()">Ask</button>
+        <div id="response"></div>
+    </div>
+
+    <script>
+        async function askQuestion() {
+            const questionInput = document.getElementById('question-input');
+            const responseDiv = document.getElementById('response');
+            const question = questionInput.value;
+
+            if (!question) return;
+
+            responseDiv.textContent = 'Thinking...';
+
+            try {
+                const response = await fetch('/ask', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ question: question }),
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    responseDiv.textContent = data.response;
+                } else {
+                    responseDiv.textContent = 'Error: ' + data.error;
+                }
+            } catch (error) {
+                responseDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
